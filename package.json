@@ -1,0 +1,27 @@
+{
+  "name": "egghead-node-express-start",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kidman90/egghead-node-express-start.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kidman90/egghead-node-express-start/issues"
+  },
+  "homepage": "https://github.com/kidman90/egghead-node-express-start#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.7"
+  }
+}
