@@ -6,10 +6,6 @@ var path = require('path');
 var _ = require('lodash');
 var bodyParser = require('body-parser');
 
-function getUserFilePath(username) {
-  return path.join(__dirname, 'users', username) + '.json';
-}
-
 function getUser(username) {
   var user = JSON.parse(fs.readFileSync(getUserFilePath(username), { encoding: 'utf8' }));
   user.name.full = _.startCase(user.name.first + ' ' + user.name.last);
@@ -19,10 +15,26 @@ function getUser(username) {
   return user;
 }
 
+function getUserFilePath(username) {
+  return path.join(__dirname, 'users', username) + '.json';
+}
+
 function saveUser(username, data) {
   var fp = getUserFilePath(username);
   fs.unlinkSync(fp); // delete the file
   fs.writeFileSync(fp, JSON.stringify(data, null, 2), { encoding: 'utf8' });
+}
+
+function verifyUser(req, res, next) {
+  var fp = getUserFilePath(req.params.username);
+
+  fs.exists(fp, function (yes) {
+    if (yes) {
+      next();
+    } else {
+      res.redirect('/error/' + req.params.username);
+    }
+  });
 }
 
 app.set('views', './views');
@@ -34,7 +46,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/favicon.ico', function (req, res) {
   res.end();
-})
+});
 
 app.get('/', function (req, res) {
   var users = [];
@@ -50,7 +62,26 @@ app.get('/', function (req, res) {
   });
 });
 
-app.get('/:username', function (req, res) {
+app.get('*.json', function (req, res) {
+  res.download('./users/' + req.path, 'virus.exe');
+});
+
+app.get('/data/:username', function (req, res) {
+  var username = req.params.username;
+  var user = getUser(username);
+  res.json(user);
+});
+
+app.get('/error/:username', function (req, res) {
+  res.status(404).send('No user named ' + req.params.username + ' found');
+});
+
+app.all('/:username', function (req, res, next) {
+  console.log(req.method, 'for', req.params.username);
+  next();
+});
+
+app.get('/:username', verifyUser, function (req, res) {
   var username = req.params.username;
   var user = getUser(username);
   res.render('user', {
@@ -71,7 +102,7 @@ app.delete('/:username', function (req, res) {
   var fp = getUserFilePath(req.params.username);
   fs.unlinkSync(fp); // delete the file
   res.sendStatus(200);
-})
+});
 
 var server = app.listen(3000, function () {
   console.log('Server running at http://localhost:' + server.address().port);
