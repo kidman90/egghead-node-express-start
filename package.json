@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/kidman90/egghead-node-express-start#readme",
   "dependencies": {
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "lodash": "^4.17.4"
   },
   "devDependencies": {
     "nodemon": "^1.12.7"
