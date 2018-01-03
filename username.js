@@ -35,8 +35,14 @@ router.get('/edit', function (req, res) {
 router.put('/', function (req, res) {
   var username = req.params.username;
 
-  User.findOneAndUpdate({ username: username }, { location: req.body }, function (err, user) {
-    res.end();
+  User.findOne({ username: username }, function (err, user) {
+    if (err) console.error(err);
+    
+    user.name.full = req.body.name;
+    user.location = req.body.location;
+    user.save(function () {
+      res.end();
+    });
   });
 });
 
